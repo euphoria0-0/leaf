@@ -72,4 +72,12 @@ def parse_args():
                     default=-1,
                     required=False)
 
+    # config
+    parser.add_argument('--method',
+                    help='client selection method;',
+                    type=str,
+                    default='RandomSelection',
+                    required=False)
+
+
     return parser.parse_args()

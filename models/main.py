@@ -13,6 +13,7 @@ from baseline_constants import MAIN_PARAMS, MODEL_PARAMS
 from client import Client
 from server import Server
 from model import ServerModel
+from client_selection import *
 
 from utils.args import parse_args
 from utils.model_utils import read_data
@@ -70,6 +71,13 @@ def main():
     stat_writer_fn = get_stat_writer_function(client_ids, client_groups, client_num_samples, args)
     sys_writer_fn = get_sys_writer_function(args)
     print_stats(0, server, clients, client_num_samples, args, stat_writer_fn, args.use_val_set)
+
+    # client selection method
+    client_selection = getattr(sys.modules[__name__], args.method)(
+        n_samples=client_num_samples,
+        num_clients=clients_per_round
+    )
+    server.set_client_selection_method(client_selection)
 
     # Simulate training
     for i in range(num_rounds):

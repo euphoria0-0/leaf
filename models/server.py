@@ -10,6 +10,9 @@ class Server:
         self.selected_clients = []
         self.updates = []
 
+    def set_client_selection_method(self, client_selection):
+        self.client_selection = client_selection
+
     def select_clients(self, my_round, possible_clients, num_clients=20):
         """Selects num_clients clients randomly from possible_clients.
         
@@ -22,9 +25,10 @@ class Server:
         Return:
             list of (num_train_samples, num_test_samples)
         """
-        num_clients = min(num_clients, len(possible_clients))
-        np.random.seed(my_round)
-        self.selected_clients = np.random.choice(possible_clients, num_clients, replace=False)
+        #num_clients = min(num_clients, len(possible_clients))
+        #np.random.seed(my_round)
+        #self.selected_clients = np.random.choice(possible_clients, num_clients, replace=False)
+        self.select_clients = self.client_selection.select(my_round, possible_clients, num_clients)
 
         return [(c.num_train_samples, c.num_test_samples) for c in self.selected_clients]
 
