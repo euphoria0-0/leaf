@@ -3,7 +3,7 @@ import numpy as np
 
 # base
 class ClientSelection(object):
-    def __init__(self) -> None:
+    def __init__(self, n_samples, num_clients) -> None:
         pass
 
     def select(self, round, possible_clients, num_clients):
@@ -12,8 +12,8 @@ class ClientSelection(object):
 
 # Random Client Selection
 class RandomSelection(ClientSelection):
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, n_samples, num_clients) -> None:
+        super().__init__(n_samples, num_clients)
         
     def select(self, round, possible_clients, num_clients):
         num_clients = min(num_clients, len(possible_clients))
@@ -24,8 +24,8 @@ class RandomSelection(ClientSelection):
 
 # Number of Local Data based Client Selection
 class NumDataSampling(ClientSelection):
-    def __init__(self, n_samples) -> None:
-        super().__init__()
+    def __init__(self, n_samples, num_clients) -> None:
+        super().__init__(n_samples, num_clients)
         client_ids = sorted(n_samples.keys())
         n_samples = np.array([n_samples[i] for i in client_ids])
         self.weights = n_samples / np.sum(n_samples)

@@ -28,7 +28,7 @@ class Server:
         #num_clients = min(num_clients, len(possible_clients))
         #np.random.seed(my_round)
         #self.selected_clients = np.random.choice(possible_clients, num_clients, replace=False)
-        self.select_clients = self.client_selection.select(my_round, possible_clients, num_clients)
+        self.selected_clients = self.client_selection.select(my_round, possible_clients, num_clients)
 
         return [(c.num_train_samples, c.num_test_samples) for c in self.selected_clients]
 
