@@ -26,13 +26,13 @@ class RandomSelection(ClientSelection):
 class NumDataSampling(ClientSelection):
     def __init__(self, n_samples, num_clients) -> None:
         super().__init__(n_samples, num_clients)
-        client_ids = sorted(n_samples.keys())
-        n_samples = np.array([n_samples[i] for i in client_ids])
-        self.weights = n_samples / np.sum(n_samples)
         
     def select(self, round, possible_clients, num_clients):
         num_clients = min(num_clients, len(possible_clients))
         np.random.seed(round)
-        weights = self.weights[possible_clients]
+        
+        n_samples = [c.num_samples for c in possible_clients]
+        weights = n_samples / np.sum(n_samples)
+        
         selected_clients = np.random.choice(possible_clients, num_clients, p=weights/sum(weights), replace=False)
         return selected_clients
