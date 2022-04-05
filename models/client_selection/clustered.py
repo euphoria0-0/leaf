@@ -5,7 +5,7 @@ import numpy as np
 # Clustered Sampling
 class ClusteredSampling1(ClientSelection):
     def __init__(self, n_samples, num_clients):
-        super().__init__()
+        super().__init__(n_samples, num_clients)
         '''
         Since clustering is performed according to the clients sample size n_i,
         unless n_i changes during the learning process,
@@ -45,6 +45,6 @@ class ClusteredSampling1(ClientSelection):
         np.random.seed(round)
         selected_clients = []
         for k in range(num_clients):
-            weight = self.distri_clusters[k][possible_clients]
-            selected_clients.append(int(np.random.choice(possible_clients, 1, p=weight/sum(weight))))
+            weight = self.distri_clusters[k]  #all clients are online.  ##np.take(self.distri_clusters[k], possible_clients)
+            selected_clients.append(np.random.choice(possible_clients, 1, p=weight/sum(weight)))
         return selected_clients
