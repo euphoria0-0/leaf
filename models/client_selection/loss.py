@@ -2,12 +2,15 @@ from .base import ClientSelection
 import numpy as np
 import os
 
-# Random Client Selection
+# Loss-based Client Selection
 class LossSampling(ClientSelection):
     def __init__(self, n_samples, num_clients) -> None:
         super().__init__(n_samples, num_clients)
 
     def set_hyperparams(self, args):
+        # alpha value for value function
+        # alpha > 0: sampling clients with high loss
+        # alpha < 0: sampling clients with low loss
         self.alpha = args.alpha
         self.save_probs = args.save_probs
         save_path = f'{args.save_path}/{args.dataset}'
@@ -36,5 +39,3 @@ class LossSampling(ClientSelection):
     def save_results(self, arr):
         arr.astype(np.float32).tofile(self.result_file, sep=',')
         self.result_file.write("\n")
-
-
