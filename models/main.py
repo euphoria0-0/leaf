@@ -1,6 +1,8 @@
 """Script to run the baselines."""
 import argparse
+from cmath import phase
 import importlib
+from turtle import pos
 import numpy as np
 import os
 import sys
@@ -9,10 +11,10 @@ import tensorflow as tf
 
 import metrics.writer as metrics_writer
 
-from baseline_constants import MAIN_PARAMS, MODEL_PARAMS
+from utils.baseline_constants import MAIN_PARAMS, MODEL_PARAMS
 from client import Client
 from server import Server
-from model import ServerModel
+from models.model import ServerModel
 from client_selection import *
 
 from utils.args import parse_args
@@ -30,13 +32,13 @@ def main():
     np.random.seed(12 + args.seed)
     tf.set_random_seed(123 + args.seed)
 
-    model_path = '%s/%s.py' % (args.dataset, args.model)
+    model_path = '%s/%s/%s.py' % ('models', args.dataset, args.model)
     if not os.path.exists(model_path):
         print('Please specify a valid dataset and a valid model.')
-    model_path = '%s.%s' % (args.dataset, args.model)
+    model_path = '%s.%s.%s' % ('models', args.dataset, args.model)
     
     print('############################## %s ##############################' % model_path)
-    mod = importlib.import_module(model_path)
+    mod = importlib.import_module(model_path, 'models')
     ClientModel = getattr(mod, 'ClientModel')
 
     tup = MAIN_PARAMS[args.dataset][args.t]
@@ -48,7 +50,7 @@ def main():
     tf.logging.set_verbosity(tf.logging.WARN)
 
     # Create 2 models
-    model_params = MODEL_PARAMS[model_path]
+    model_params = MODEL_PARAMS[model_path.replace('models.','')]
     if args.lr != -1:
         model_params_list = list(model_params)
         model_params_list[0] = args.lr
@@ -62,7 +64,7 @@ def main():
     server = Server(client_model)
 
     # Create clients
-    clients = setup_clients(args.dataset, client_model, args.use_val_set)
+    clients = setup_clients(args.dataset, client_model, args.use_val_set, args.dataset_path)
     client_ids, client_groups, client_num_samples = server.get_clients_info(clients)
     print('Clients in Total: %d' % len(clients))
 
@@ -83,14 +85,23 @@ def main():
     for i in range(num_rounds):
         print('--- Round %d of %d: Training %d Clients ---' % (i + 1, num_rounds, clients_per_round))
 
-        # Select clients to train this round
-        server.select_clients(i, online(clients), num_clients=clients_per_round)
-        c_ids, c_groups, c_num_samples = server.get_clients_info(server.selected_clients)
+        # (PRE) Select clients to train this round
+        if args.method in LOSS_BASED_SELECTION:
+            server.set_possible_clients(online(clients))  # just set available clients to measure metrics
+        else:
+            server.select_clients(i, online(clients), num_clients=clients_per_round)
 
         # Simulate server model training on selected clients' data
         sys_metrics = server.train_model(num_epochs=args.num_epochs, batch_size=args.batch_size, minibatch=args.minibatch)
+        
+        # (POST) Select clients to train this round
+        if args.method in LOSS_BASED_SELECTION:
+            server.select_clients(i, online(clients), num_clients=clients_per_round, metric=sys_metrics)
+        
+        c_ids, c_groups, c_num_samples = server.get_clients_info(server.selected_clients)
         sys_writer_fn(i + 1, c_ids, sys_metrics, c_groups, c_num_samples)
         
+
         # Update server model
         server.update_model()
 
@@ -120,15 +131,15 @@ def create_clients(users, groups, train_data, test_data, model):
     return clients
 
 
-def setup_clients(dataset, model=None, use_val_set=False):
+def setup_clients(dataset, model=None, use_val_set=False, data_path='..'):
     """Instantiates clients based on given train and test data directories.
 
     Return:
         all_clients: list of Client objects.
     """
     eval_set = 'test' if not use_val_set else 'val'
-    train_data_dir = os.path.join('..', 'data', dataset, 'data', 'train')
-    test_data_dir = os.path.join('..', 'data', dataset, 'data', eval_set)
+    train_data_dir = os.path.join(data_path, 'data', dataset, 'data', 'train')
+    test_data_dir = os.path.join(data_path, 'data', dataset, 'data', eval_set)
 
     users, groups, train_data, test_data = read_data(train_data_dir, test_data_dir)
 

@@ -4,7 +4,7 @@ import tensorflow as tf
 
 from PIL import Image
 
-from model import Model
+from ..model import Model
 
 
 IMAGE_SIZE = 84

@@ -5,7 +5,7 @@ import tensorflow as tf
 
 from tensorflow.contrib import rnn
 
-from model import Model
+from ..model import Model
 from utils.language_utils import line_to_indices, get_word_emb_arr, val_to_vec
 
 

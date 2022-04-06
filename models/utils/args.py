@@ -78,6 +78,13 @@ def parse_args():
                     type=str,
                     default='RandomSelection',
                     required=False)
+    
+
+    parser.add_argument('--dataset_path',
+                    help='dataset path;',
+                    type=str,
+                    default='..',
+                    required=False)
 
 
     return parser.parse_args()

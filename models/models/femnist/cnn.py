@@ -1,7 +1,7 @@
 import tensorflow as tf
-
-from model import Model
 import numpy as np
+
+from ..model import Model
 
 
 IMAGE_SIZE = 28

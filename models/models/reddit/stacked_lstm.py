@@ -7,7 +7,7 @@ import tensorflow as tf
 
 from tensorflow.contrib import rnn
 
-from model import Model
+from ..model import Model
 
 VOCABULARY_PATH = '../data/reddit/vocab/reddit_vocab.pck'
 

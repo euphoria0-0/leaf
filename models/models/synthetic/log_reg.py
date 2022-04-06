@@ -5,7 +5,7 @@ import os
 import sys
 import tensorflow as tf
 
-from model import Model
+from ..model import Model
 from utils.model_utils import batch_data
 
 

@@ -1,6 +1,6 @@
 import numpy as np
 
-from baseline_constants import BYTES_WRITTEN_KEY, BYTES_READ_KEY, LOCAL_COMPUTATIONS_KEY
+from utils.baseline_constants import BYTES_WRITTEN_KEY, BYTES_READ_KEY, LOCAL_COMPUTATIONS_KEY
 
 class Server:
     
@@ -12,6 +12,9 @@ class Server:
 
     def set_client_selection_method(self, client_selection):
         self.client_selection = client_selection
+    
+    def set_possible_clients(self, possible_clients):
+        self.selected_clients = possible_clients
 
     def select_clients(self, my_round, possible_clients, num_clients=20):
         """Selects num_clients clients randomly from possible_clients.
@@ -28,7 +31,7 @@ class Server:
         #num_clients = min(num_clients, len(possible_clients))
         #np.random.seed(my_round)
         #self.selected_clients = np.random.choice(possible_clients, num_clients, replace=False)
-        self.selected_clients = self.client_selection.select(my_round, possible_clients, num_clients)
+        self.selected_clients = self.client_selection.preselect(my_round, possible_clients, num_clients)
 
         return [(c.num_train_samples, c.num_test_samples) for c in self.selected_clients]
 
