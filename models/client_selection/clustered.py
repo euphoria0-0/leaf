@@ -27,10 +27,10 @@ class ClusteredSampling1(ClientSelection):
         distri_clusters = np.zeros((n_cluster, total)).astype(int)
         k = 0
         for client_idx in ordered_client_idx:
-            print(augmented_weights[client_idx] > 0)
             while augmented_weights[client_idx] > 0:
                 sum_proba_in_k = np.sum(distri_clusters[k])
                 u_i = min(epsilon - sum_proba_in_k, augmented_weights[client_idx])
+                print(u_i)
                 distri_clusters[k, client_idx] = u_i
                 augmented_weights[client_idx] += -u_i
                 sum_proba_in_k = np.sum(distri_clusters[k])
@@ -40,9 +40,10 @@ class ClusteredSampling1(ClientSelection):
         distri_clusters = distri_clusters.astype(float)
         for l in range(n_cluster):
             distri_clusters[l] /= np.sum(distri_clusters[l])
+            print(np.sum(distri_clusters[l]))
 
         self.distri_clusters = distri_clusters
-        print(self.distri_clusters)
+        
 
     def select(self, round, possible_clients, num_clients):
         num_clients = min(num_clients, len(possible_clients))
@@ -50,6 +51,5 @@ class ClusteredSampling1(ClientSelection):
         selected_clients = []
         for k in range(num_clients):
             weight = self.distri_clusters[k]  #all clients are online.  ##np.take(self.distri_clusters[k], possible_clients)
-            print(weight/sum(weight))
             selected_clients.append(np.random.choice(possible_clients, 1, p=weight/sum(weight)))
         return selected_clients

@@ -79,12 +79,14 @@ def main():
         n_samples=client_num_samples,
         num_clients=clients_per_round
     )
+    if args.method in LOSS_BASED_SELECTION:
+        client_selection.set_hyperparams(args)
     server.set_client_selection_method(client_selection)
 
     # Simulate training
     for i in range(num_rounds):
-        print('--- Round %d of %d: Training %d Clients ---' % (i + 1, num_rounds, clients_per_round))
-
+        print('--- Round %d of %d: Training %d Clients ---' % (i + 1, num_rounds, clients_per_round if args.method not in LOSS_BASED_SELECTION else len(online(clients))))
+        
         # (PRE) Select clients to train this round
         if args.method in LOSS_BASED_SELECTION:
             server.set_possible_clients(online(clients))  # just set available clients to measure metrics
@@ -96,7 +98,11 @@ def main():
         
         # (POST) Select clients to train this round
         if args.method in LOSS_BASED_SELECTION:
-            server.select_clients(i, online(clients), num_clients=clients_per_round, metric=sys_metrics)
+            # measure train loss
+            train_stat_metrics = server.test_model(clients, set_to_use='train')
+            train_losses = [train_stat_metrics[c]['loss'] for c in sorted(train_stat_metrics)]
+            
+            server.select_clients(i, online(clients), num_clients=clients_per_round, metric=train_losses)
         
         c_ids, c_groups, c_num_samples = server.get_clients_info(server.selected_clients)
         sys_writer_fn(i + 1, c_ids, sys_metrics, c_groups, c_num_samples)

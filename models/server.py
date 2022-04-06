@@ -16,7 +16,7 @@ class Server:
     def set_possible_clients(self, possible_clients):
         self.selected_clients = possible_clients
 
-    def select_clients(self, my_round, possible_clients, num_clients=20):
+    def select_clients(self, my_round, possible_clients, num_clients=20, metric=None):
         """Selects num_clients clients randomly from possible_clients.
         
         Note that within function, num_clients is set to
@@ -31,7 +31,11 @@ class Server:
         #num_clients = min(num_clients, len(possible_clients))
         #np.random.seed(my_round)
         #self.selected_clients = np.random.choice(possible_clients, num_clients, replace=False)
-        self.selected_clients = self.client_selection.preselect(my_round, possible_clients, num_clients)
+        if metric is None:
+            self.selected_clients = self.client_selection.select(my_round, possible_clients, num_clients)
+        else:
+            self.selected_clients = self.client_selection.select(my_round, possible_clients, num_clients, metric)
+        
 
         return [(c.num_train_samples, c.num_test_samples) for c in self.selected_clients]
 

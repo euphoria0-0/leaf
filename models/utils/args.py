@@ -78,13 +78,25 @@ def parse_args():
                     type=str,
                     default='RandomSelection',
                     required=False)
-    
-
     parser.add_argument('--dataset_path',
                     help='dataset path;',
                     type=str,
                     default='..',
                     required=False)
+    parser.add_argument('--save_path',
+                    help='path to save results;',
+                    type=str,
+                    default='results/',
+                    required=False)
+    parser.add_argument('--save_probs', 
+                        help='save values',
+                        action='store_true', 
+                        default=False)
+    parser.add_argument('--alpha',
+                        help='alpha for value function in loss-based sampling methods',
+                        type=int,
+                        default=1)
+    
 
 
     return parser.parse_args()
