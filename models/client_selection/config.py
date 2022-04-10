@@ -1,2 +1,2 @@
 
-LOSS_BASED_SELECTION = ['LossSampling']
+LOSS_BASED_SELECTION = ['LossSampling','LossRank']
