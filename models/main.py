@@ -98,7 +98,7 @@ def main():
         print('--- Round %d of %d: Training %d Clients ---' % (i + 1, num_rounds, clients_per_round if args.method not in LOSS_BASED_SELECTION else len(online(clients))))
         
         # buffer client
-        online_clients = online(clients, args.num_available)
+        online_clients = online(clients, round, args.num_available)
 
         # (PRE) Select clients to train this round
         if args.method in LOSS_BASED_SELECTION:
@@ -138,11 +138,13 @@ def main():
     # Close models
     server.close_model()
 
-def online(clients, num_available=None):
+
+
+def online(clients, round, num_available=None):
     """We assume all users are always online."""
     """I assume only subset of users are online."""
     if num_available is not None:
-        num_clients = min(num_clients, num_available)
+        num_clients = min(len(clients), num_available)
         np.random.seed(round)
         selected_clients = np.random.choice(clients, num_clients, replace=False)
     else:
