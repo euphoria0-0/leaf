@@ -98,7 +98,7 @@ def main():
         print('--- Round %d of %d: Training %d Clients ---' % (i + 1, num_rounds, clients_per_round if args.num_available is None else args.num_available))
         
         # buffer client
-        online_clients = online(clients, round, args.num_available)
+        online_clients = online(clients, i, args.num_available)
 
         # (PRE) Select clients to train this round
         if args.method in LOSS_BASED_SELECTION:
