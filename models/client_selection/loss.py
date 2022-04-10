@@ -19,7 +19,6 @@ class LossSampling(ClientSelection):
         
     def select(self, round, possible_clients, num_clients, metric):
         num_clients = min(num_clients, len(possible_clients))
-        np.random.seed(round)
         # value
         values = np.exp(np.array(metric) * self.alpha)
         probs = values / sum(values)

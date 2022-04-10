@@ -47,7 +47,6 @@ class ClusteredSampling1(ClientSelection):
 
     def select(self, round, possible_clients, num_clients):
         num_clients = min(num_clients, len(possible_clients))
-        np.random.seed(round)
         selected_clients = []
         for k in range(num_clients):
             weight = self.distri_clusters[k]  #all clients are online.  ##np.take(self.distri_clusters[k], possible_clients)

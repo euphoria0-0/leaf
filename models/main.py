@@ -128,12 +128,15 @@ def main():
     # Close models
     server.close_model()
 
-def online(clients, num_available):
+def online(clients, num_available=None):
     """We assume all users are always online."""
     """I assume only subset of users are online."""
-    num_clients = min(num_clients, num_available)
-    #np.random.seed(round)
-    selected_clients = np.random.choice(clients, num_clients, replace=False)
+    if num_available is not None:
+        num_clients = min(num_clients, num_available)
+        np.random.seed(round)
+        selected_clients = np.random.choice(clients, num_clients, replace=False)
+    else:
+        selected_clients = clients
     return selected_clients
 
 

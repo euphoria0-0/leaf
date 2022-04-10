@@ -17,7 +17,6 @@ class RandomSelection(ClientSelection):
         
     def select(self, round, possible_clients, num_clients):
         num_clients = min(num_clients, len(possible_clients))
-        np.random.seed(round)
         selected_clients = np.random.choice(possible_clients, num_clients, replace=False)
         return selected_clients
 
@@ -29,7 +28,6 @@ class NumDataSampling(ClientSelection):
         
     def select(self, round, possible_clients, num_clients):
         num_clients = min(num_clients, len(possible_clients))
-        np.random.seed(round)
         
         n_samples = [c.num_samples for c in possible_clients]
         weights = n_samples / np.sum(n_samples)
