@@ -7,6 +7,7 @@ import numpy as np
 import os
 import sys
 import random
+import time
 import tensorflow as tf
 
 import metrics.writer as metrics_writer
@@ -26,6 +27,15 @@ SYS_METRICS_PATH = 'metrics/sys_metrics.csv'
 def main():
 
     args = parse_args()
+    
+    args.start = time.strftime('%Y%m%d-%H%M%S', time.localtime())
+    args.save_path = f'{args.save_path}/{args.dataset}_{args.t[0]}/{args.metrics_name}_{args.start}'
+    os.makedirs(save_path, exist_ok=True)
+
+    opts_file = open(f'{args.save_path}/options.txt', 'w')
+    for arg in vars(args):
+        opts_file.write(f' {arg} = {getattr(args, arg)}\n')
+    opts_file.close()
 
     # Set the random seed if provided (affects client sampling, and batching)
     random.seed(1 + args.seed)
@@ -168,7 +178,7 @@ def get_stat_writer_function(ids, groups, num_samples, args):
 
     def writer_fn(num_round, metrics, partition):
         metrics_writer.print_metrics(
-            num_round, ids, metrics, groups, num_samples, partition, args.metrics_dir, '{}_{}'.format(args.metrics_name, 'stat'))
+            num_round, ids, metrics, groups, num_samples, partition, args.save_path, '{}_{}'.format(args.metrics_name, 'stat'))
 
     return writer_fn
 
@@ -177,7 +187,7 @@ def get_sys_writer_function(args):
 
     def writer_fn(num_round, ids, metrics, groups, num_samples):
         metrics_writer.print_metrics(
-            num_round, ids, metrics, groups, num_samples, 'train', args.metrics_dir, '{}_{}'.format(args.metrics_name, 'sys'))
+            num_round, ids, metrics, groups, num_samples, 'train', args.save_path, '{}_{}'.format(args.metrics_name, 'sys'))
 
     return writer_fn
 

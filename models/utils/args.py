@@ -41,11 +41,11 @@ def parse_args():
                     type=str,
                     default='metrics',
                     required=False)
-    parser.add_argument('--metrics-dir', 
+    """parser.add_argument('--metrics-dir', 
                     help='dir for metrics file;',
                     type=str,
                     default='metrics',
-                    required=False)
+                    required=False)"""
     parser.add_argument('--use-val-set', 
                     help='use validation set;', 
                     action='store_true')
@@ -83,7 +83,7 @@ def parse_args():
                     type=str,
                     default='..',
                     required=False)
-    parser.add_argument('--save_path',
+    parser.add_argument('--save-path',
                     help='path to save results;',
                     type=str,
                     default='results/',
