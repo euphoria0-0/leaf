@@ -1,6 +1,5 @@
 from .base import ClientSelection
 import numpy as np
-import os
 
 # Loss-based Client Selection
 class LossSampling(ClientSelection):
@@ -13,9 +12,8 @@ class LossSampling(ClientSelection):
         # alpha < 0: sampling clients with low loss
         self.alpha = args.alpha
         self.save_probs = args.save_probs
-        save_path = f'{args.save_path}/{args.dataset}'
-        os.makedirs(save_path, exist_ok=True)
-        self.result_file = open(f'{save_path}/{args.metrics_name}_values.txt', 'w')
+        if self.save_probs:
+            self.result_file = open(f'{args.save_path}/values.txt', 'w')
         
     def select(self, round, possible_clients, num_clients, metric):
         num_clients = min(num_clients, len(possible_clients))
@@ -29,6 +27,6 @@ class LossSampling(ClientSelection):
 
         return selected_clients
     
-    def save_results(self, arr):
+    def save_results(self, arr, round):
         arr.astype(np.float32).tofile(self.result_file, sep=',')
         self.result_file.write("\n")

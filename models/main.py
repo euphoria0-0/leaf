@@ -27,14 +27,14 @@ SYS_METRICS_PATH = 'metrics/sys_metrics.csv'
 def main():
 
     args = parse_args()
-    
+
     args.start = time.strftime('%Y%m%d-%H%M%S', time.localtime())
     args.save_path = f'{args.save_path}/{args.dataset}_{args.t[0]}/{args.metrics_name}_{args.start}'
-    os.makedirs(save_path, exist_ok=True)
+    os.makedirs(args.save_path, exist_ok=True)
 
     opts_file = open(f'{args.save_path}/options.txt', 'w')
     for arg in vars(args):
-        opts_file.write(f' {arg} = {getattr(args, arg)}\n')
+        opts_file.write(f'{arg} = {getattr(args, arg)}\n')
     opts_file.close()
 
     # Set the random seed if provided (affects client sampling, and batching)
