@@ -30,12 +30,6 @@ class LossSampling(ClientSelection):
 
         return selected_clients
     
-    def preselect(self, round, possible_clients, num_clients):
-        num_clients = min(num_clients, len(possible_clients))
-        np.random.seed(round)
-        selected_clients = np.random.choice(possible_clients, num_clients, replace=False)
-        return selected_clients
-    
     def save_results(self, arr):
         arr.astype(np.float32).tofile(self.result_file, sep=',')
         self.result_file.write("\n")

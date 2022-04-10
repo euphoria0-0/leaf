@@ -87,11 +87,14 @@ def main():
     for i in range(num_rounds):
         print('--- Round %d of %d: Training %d Clients ---' % (i + 1, num_rounds, clients_per_round if args.method not in LOSS_BASED_SELECTION else len(online(clients))))
         
+        # buffer client
+        online_clients = online(clients, args.num_available)
+
         # (PRE) Select clients to train this round
         if args.method in LOSS_BASED_SELECTION:
-            server.set_possible_clients(online(clients))  # just set available clients to measure metrics
+            server.set_possible_clients(online_clients)  # just set available clients to measure metrics
         else:
-            server.select_clients(i, online(clients), num_clients=clients_per_round)
+            server.select_clients(i, online_clients, num_clients=clients_per_round)
 
         # Simulate server model training on selected clients' data
         sys_metrics = server.train_model(num_epochs=args.num_epochs, batch_size=args.batch_size, minibatch=args.minibatch)
@@ -102,7 +105,7 @@ def main():
             train_stat_metrics = server.test_model(clients, set_to_use='train')
             train_losses = [train_stat_metrics[c]['loss'] for c in sorted(train_stat_metrics)]
             
-            server.select_clients(i, online(clients), num_clients=clients_per_round, metric=train_losses)
+            server.select_clients(i, online_clients, num_clients=clients_per_round, metric=train_losses)
         
         c_ids, c_groups, c_num_samples = server.get_clients_info(server.selected_clients)
         sys_writer_fn(i + 1, c_ids, sys_metrics, c_groups, c_num_samples)
@@ -125,9 +128,13 @@ def main():
     # Close models
     server.close_model()
 
-def online(clients):
+def online(clients, num_available):
     """We assume all users are always online."""
-    return clients
+    """I assume only subset of users are online."""
+    num_clients = min(num_clients, num_available)
+    #np.random.seed(round)
+    selected_clients = np.random.choice(clients, num_clients, replace=False)
+    return selected_clients
 
 
 def create_clients(users, groups, train_data, test_data, model):
