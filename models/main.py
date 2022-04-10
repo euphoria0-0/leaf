@@ -95,7 +95,7 @@ def main():
 
     # Simulate training
     for i in range(num_rounds):
-        print('--- Round %d of %d: Training %d Clients ---' % (i + 1, num_rounds, clients_per_round if args.method not in LOSS_BASED_SELECTION else len(online(clients))))
+        print('--- Round %d of %d: Training %d Clients ---' % (i + 1, num_rounds, clients_per_round if args.num_available is None else args.num_available))
         
         # buffer client
         online_clients = online(clients, round, args.num_available)
