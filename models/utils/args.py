@@ -99,7 +99,7 @@ def parse_args():
     parser.add_argument('--num_available',
                         help='number of available clients;',
                         type=int,
-                        default=1000)
+                        default=None)
     
 
 
