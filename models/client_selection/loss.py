@@ -27,9 +27,12 @@ class LossSampling(ClientSelection):
 
         return selected_clients
     
-    def save_results(self, arr, round):
+    def save_results(self, arr):
         arr.astype(np.float32).tofile(self.result_file, sep=',')
         self.result_file.write("\n")
+    
+    def close_file(self):
+        self.result_file.close()
 
 
 

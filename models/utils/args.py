@@ -94,7 +94,7 @@ def parse_args():
                         default=False)
     parser.add_argument('--alpha',
                         help='alpha for value function in loss-based sampling methods',
-                        type=int,
+                        type=float,
                         default=1)
     parser.add_argument('--num_available',
                         help='number of available clients;',

@@ -112,7 +112,7 @@ def main():
         # (POST) Select clients to train this round
         if args.method in LOSS_BASED_SELECTION:
             # measure train loss
-            train_stat_metrics = server.test_model(clients, set_to_use='train')
+            train_stat_metrics = server.test_model(online_clients, set_to_use='train')
             train_losses = [train_stat_metrics[c]['loss'] for c in sorted(train_stat_metrics)]
             
             server.select_clients(i, online_clients, num_clients=clients_per_round, metric=train_losses)

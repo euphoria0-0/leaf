@@ -75,7 +75,7 @@ class Server:
             sys_metrics[c.id][BYTES_WRITTEN_KEY] += c.model.size
             sys_metrics[c.id][LOCAL_COMPUTATIONS_KEY] = comp
 
-            progressBar(c_idx, len(clients))
+            progressBar(c_idx+1, len(clients))
 
             self.updates.append((num_samples, update))
 
@@ -139,3 +139,4 @@ class Server:
 
     def close_model(self):
         self.client_model.close()
+        self.client_selection.close_file()
