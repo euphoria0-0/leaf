@@ -91,6 +91,8 @@ def main():
     )
     if args.method in LOSS_BASED_SELECTION:
         client_selection.set_hyperparams(args)
+    if args.method in CLUSTERED_SAMPLING:
+        client_selection.set_client_ids([c.id for c in clients])
     server.set_client_selection_method(client_selection)
 
     # Simulate training
@@ -132,7 +134,7 @@ def main():
     ckpt_path = os.path.join('checkpoints', args.dataset)
     if not os.path.exists(ckpt_path):
         os.makedirs(ckpt_path)
-    save_path = server.save_model(os.path.join(ckpt_path, '{}.ckpt'.format(args.model)))
+    save_path = server.save_model(os.path.join(ckpt_path, '{}_{}.ckpt'.format(args.model, args.metric_name)))
     print('Model saved in path: %s' % save_path)
 
     # Close models

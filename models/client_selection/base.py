@@ -8,6 +8,14 @@ class ClientSelection(object):
 
     def select(self, round, possible_clients, num_clients):
         pass
+    
+    def save_results(self, arr):
+        np.round(arr,8).tofile(self.result_file, sep=',')
+        self.result_file.write("\n")
+    
+    def close_file(self):
+        self.result_file.close()
+        
 
 
 # Random Client Selection

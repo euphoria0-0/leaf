@@ -1,2 +1,4 @@
 
-LOSS_BASED_SELECTION = ['LossSampling','LossRank']
+LOSS_BASED_SELECTION = ['LossSampling','LossRankSampling','LossRankSelection']
+
+CLUSTERED_SAMPLING = ['ClusteredSampling1']

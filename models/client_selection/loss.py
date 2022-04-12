@@ -11,7 +11,7 @@ class LossSampling(ClientSelection):
         # alpha > 0: sampling clients with high loss
         # alpha < 0: sampling clients with low loss
         self.alpha = args.alpha
-        self.save_probs = args.save_probs
+        self.save_probs = True
         if self.save_probs:
             self.result_file = open(f'{args.save_path}/values.txt', 'w')
         
@@ -22,31 +22,19 @@ class LossSampling(ClientSelection):
         probs = values / sum(values)
         selected_clients = np.random.choice(possible_clients, num_clients, p=probs, replace=False)
         # save
-        if self.save_probs:
-            self.save_results(values)
+        #if self.save_probs:
+        self.save_results(values)
 
         return selected_clients
-    
-    def save_results(self, arr):
-        arr.astype(np.float32).tofile(self.result_file, sep=',')
-        self.result_file.write("\n")
-    
-    def close_file(self):
-        self.result_file.close()
-
 
 
 # Loss-based Client Selection
-class LossRank(ClientSelection):
+class LossRankSampling(ClientSelection):
     def __init__(self, n_samples, num_clients) -> None:
         super().__init__(n_samples, num_clients)
 
     def set_hyperparams(self, args):
-        # alpha value for value function
-        # alpha > 0: sampling clients with high loss
-        # alpha < 0: sampling clients with low loss
-        self.alpha = args.alpha
-        self.save_probs = args.save_probs
+        self.save_probs = True
         if self.save_probs:
             self.result_file = open(f'{args.save_path}/values.txt', 'w')
         
@@ -65,7 +53,16 @@ class LossRank(ClientSelection):
             self.save_results(probs)
 
         return selected_clients
-    
-    def save_results(self, arr, round):
-        arr.astype(np.float32).tofile(self.result_file, sep=',')
-        self.result_file.write("\n")
+
+
+
+# Loss-based Client Selection
+class LossRankSelection(ClientSelection):
+    def __init__(self, n_samples, num_clients) -> None:
+        super().__init__(n_samples, num_clients)
+        
+    def select(self, round, possible_clients, num_clients, metric):
+        num_clients = min(num_clients, len(possible_clients))
+        # select high rank-value
+        selected_client_idxs = np.argsort(metric)[-num_clients:]
+        return selected_clients
