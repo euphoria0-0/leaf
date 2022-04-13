@@ -6,6 +6,9 @@ class ClientSelection(object):
     def __init__(self, n_samples, num_clients) -> None:
         pass
 
+    def set_hyperparams(self, args):
+        pass
+
     def select(self, round, possible_clients, num_clients):
         pass
     

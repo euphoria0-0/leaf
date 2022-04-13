@@ -4,6 +4,7 @@ from tqdm import tqdm
 from utils.baseline_constants import BYTES_WRITTEN_KEY, BYTES_READ_KEY, LOCAL_COMPUTATIONS_KEY
 from utils.utils import progressBar
 
+
 class Server:
     
     def __init__(self, client_model):
@@ -18,7 +19,10 @@ class Server:
     def set_possible_clients(self, possible_clients):
         self.selected_clients = possible_clients
 
-    def select_clients(self, my_round, possible_clients, num_clients=20, metric=None):
+    def select_candidates(self, possible_clients, d):
+        self.selected_clients = self.client_selection.select_candidates(possible_clients, d)
+
+    def select_clients(self, my_round, possible_clients=None, num_clients=20, metric=None):
         """Selects num_clients clients randomly from possible_clients.
         
         Note that within function, num_clients is set to
@@ -30,14 +34,13 @@ class Server:
         Return:
             list of (num_train_samples, num_test_samples)
         """
-        #num_clients = min(num_clients, len(possible_clients))
-        #np.random.seed(my_round)
-        #self.selected_clients = np.random.choice(possible_clients, num_clients, replace=False)
+        if possible_clients is None:
+            possible_clients = self.selected_clients
+            
         if metric is None:
             self.selected_clients = self.client_selection.select(my_round, possible_clients, num_clients)
         else:
             self.selected_clients = self.client_selection.select(my_round, possible_clients, num_clients, metric)
-        
 
         return [(c.num_train_samples, c.num_test_samples) for c in self.selected_clients]
 
@@ -92,7 +95,7 @@ class Server:
         self.model = averaged_soln
         self.updates = []
 
-    def test_model(self, clients_to_test, set_to_use='test'):
+    def test_model(self, clients_to_test=None, set_to_use='test'):
         """Tests self.model on given clients.
 
         Tests model on self.selected_clients if clients_to_test=None.

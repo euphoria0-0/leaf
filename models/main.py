@@ -99,11 +99,13 @@ def main():
     for i in range(num_rounds):
         #print('--- Round %d of %d: Training %d Clients ---' % (i + 1, num_rounds, clients_per_round if args.num_available is None else args.num_available))
         
-        # buffer client
+        # available clients
         online_clients = online(clients, i, args.num_available)
 
         # (PRE) Select clients to train this round
-        if args.method in LOSS_BASED_SELECTION:
+        if args.method in BUFFER_SELECTION:
+            server.select_candidates(online_clients, args.buffer_size)
+        elif args.method in LOSS_BASED_SELECTION:
             server.set_possible_clients(online_clients)  # just set available clients to measure metrics
         else:
             server.select_clients(i, online_clients, num_clients=clients_per_round)
@@ -114,10 +116,10 @@ def main():
         # (POST) Select clients to train this round
         if args.method in LOSS_BASED_SELECTION:
             # measure train loss
-            train_stat_metrics = server.test_model(online_clients, set_to_use='train')
+            train_stat_metrics = server.test_model(set_to_use='train')
             train_losses = [train_stat_metrics[c]['loss'] for c in sorted(train_stat_metrics)]
             
-            server.select_clients(i, online_clients, num_clients=clients_per_round, metric=train_losses)
+            server.select_clients(i, num_clients=clients_per_round, metric=train_losses)
         
         c_ids, c_groups, c_num_samples = server.get_clients_info(server.selected_clients)
         sys_writer_fn(i + 1, c_ids, sys_metrics, c_groups, c_num_samples)

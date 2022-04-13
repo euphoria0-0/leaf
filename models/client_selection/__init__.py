@@ -1,10 +1,10 @@
-from .base import RandomSelection, NumDataSampling
-from .clustered import ClusteredSampling1
-from .loss import LossSampling, LossRankSampling, LossRankSelection
+from .base import *
+from .clustered import *
+from .loss import *
 from .config import *
 
 
 __all__ = ['RandomSelection','NumDataSampling',
             'ClusteredSampling1',
-            'LossSampling', 'LossRankSampling','LossRankSelection',
-            'LOSS_BASED_SELECTION', 'CLUSTERED_SAMPLING']
+            'LossSampling', 'LossRankSampling','LossRankSelection','PowerOfChoice','ActiveFederatedLearning',
+            'LOSS_BASED_SELECTION', 'CLUSTERED_SAMPLING', 'BUFFER_SELECTION']
