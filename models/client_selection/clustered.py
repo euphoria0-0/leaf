@@ -37,18 +37,17 @@ class ClusteredSampling1(ClientSelection):
         distri_clusters = distri_clusters.astype(float)
         for l in range(n_cluster):
             distri_clusters[l] /= np.sum(distri_clusters[l])
-            print(np.sum(distri_clusters[l]))
 
         self.distri_clusters = distri_clusters
     
     def set_client_ids(self, client_ids):
         self.client_ids = {c_id:idx for idx,c_id in enumerate(client_ids)}
 
-    def select(self, round, possible_clients, num_clients, metric):
+    def select(self, round, possible_clients, num_clients):
         num_clients = min(num_clients, len(possible_clients))
         current_clients_ids = np.array([self.client_ids[c.id] for c in possible_clients])
         selected_clients = []
         for k in range(num_clients):
             weight = self.distri_clusters[k][current_clients_ids]
-            selected_clients.append(np.random.choice(possible_clients, 1, p=weight/sum(weight)))
+            selected_clients.append(np.random.choice(possible_clients, 1, p=weight/sum(weight))[0])
         return selected_clients

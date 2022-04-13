@@ -97,7 +97,7 @@ def main():
 
     # Simulate training
     for i in range(num_rounds):
-        print('--- Round %d of %d: Training %d Clients ---' % (i + 1, num_rounds, clients_per_round if args.num_available is None else args.num_available))
+        #print('--- Round %d of %d: Training %d Clients ---' % (i + 1, num_rounds, clients_per_round if args.num_available is None else args.num_available))
         
         # buffer client
         online_clients = online(clients, i, args.num_available)
@@ -109,7 +109,7 @@ def main():
             server.select_clients(i, online_clients, num_clients=clients_per_round)
 
         # Simulate server model training on selected clients' data
-        sys_metrics = server.train_model(num_epochs=args.num_epochs, batch_size=args.batch_size, minibatch=args.minibatch)
+        sys_metrics = server.train_model(num_epochs=args.num_epochs, batch_size=args.batch_size, minibatch=args.minibatch, rnd=i+1, num_rnd=num_rounds)
         
         # (POST) Select clients to train this round
         if args.method in LOSS_BASED_SELECTION:
@@ -134,7 +134,7 @@ def main():
     ckpt_path = os.path.join('checkpoints', args.dataset)
     if not os.path.exists(ckpt_path):
         os.makedirs(ckpt_path)
-    save_path = server.save_model(os.path.join(ckpt_path, '{}_{}.ckpt'.format(args.model, args.metric_name)))
+    save_path = server.save_model(os.path.join(ckpt_path, '{}_{}.ckpt'.format(args.model, args.metrics_name)))
     print('Model saved in path: %s' % save_path)
 
     # Close models
@@ -148,7 +148,7 @@ def online(clients, round, num_available=None):
     if num_available is not None:
         num_clients = min(len(clients), num_available)
         np.random.seed(round)
-        selected_clients = np.random.choice(clients, num_clients, replace=False)
+        selected_clients = np.random.choice(clients, num_clients, replace=False).tolist()
     else:
         selected_clients = clients
     return selected_clients
