@@ -23,12 +23,12 @@ def parse_args():
     parser.add_argument('--eval-every',
                     help='evaluate every ____ rounds;',
                     type=int,
-                    default=-1)
-    parser.add_argument('--clients-per-round',
+                    default=1)
+    parser.add_argument('-A','--clients-per-round',
                     help='number of clients trained per round;',
                     type=int,
                     default=-1)
-    parser.add_argument('--batch-size',
+    parser.add_argument('-B','--batch-size',
                     help='batch size when clients train on data;',
                     type=int,
                     default=10)
@@ -96,14 +96,19 @@ def parse_args():
                         help='alpha for value function in loss-based sampling methods',
                         type=float,
                         default=1)
-    parser.add_argument('--num_available',
+    parser.add_argument('-n','--num_available',
                         help='number of available clients;',
                         type=int,
                         default=None)
-    parser.add_argument('--buffer_size',
+    parser.add_argument('-d','--buffer_size',
                         help='number of buffer clients;',
                         type=int,
                         default=None)
+    parser.add_argument('--loss',
+                    help='avg/total/sqrt loss;',
+                    type=str,
+                    default='avg',
+                    required=False)
     
 
 
