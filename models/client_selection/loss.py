@@ -2,16 +2,16 @@ from .base import ClientSelection
 import numpy as np
 from copy import deepcopy
 
+
 # Loss-based Client Selection
 class LossSampling(ClientSelection):
-    def __init__(self, n_samples, num_clients) -> None:
-        super().__init__(n_samples, num_clients)
-
-    def set_hyperparams(self, args):
+    def __init__(self, n_samples, num_clients, client_ids, args) -> None:
+        super().__init__(n_samples, num_clients, client_ids, args)
         # alpha value for value function
         # alpha > 0: sampling clients with high loss
         # alpha < 0: sampling clients with low loss
         self.alpha = args.alpha
+        self.loss = args.loss
         self.save_probs = True
         if self.save_probs:
             self.result_file = open(f'{args.save_path}/values.txt', 'w')
@@ -19,6 +19,8 @@ class LossSampling(ClientSelection):
     def select(self, round, possible_clients, num_clients, metric):
         num_clients = min(num_clients, len(possible_clients))
         # create value
+        if self.loss == 'total':
+            metric *= np.array([c.num_samples for c in possible_clients])
         values = np.exp(np.array(metric) * self.alpha)
         probs = values / sum(values)
         selected_clients = np.random.choice(possible_clients, num_clients, p=probs, replace=False)
@@ -29,7 +31,7 @@ class LossSampling(ClientSelection):
         return selected_clients
         
     def save_results(self, arr):
-        np.round(arr,8).tofile(self.result_file, sep=',')
+        np.round(arr, 8).tofile(self.result_file, sep=',')
         self.result_file.write("\n")
     
     def close_file(self):
@@ -39,8 +41,8 @@ class LossSampling(ClientSelection):
 
 # Loss-based Client Selection
 class LossRankSampling(ClientSelection):
-    def __init__(self, n_samples, num_clients) -> None:
-        super().__init__(n_samples, num_clients)
+    def __init__(self, n_samples, num_clients, client_ids, args) -> None:
+        super().__init__(n_samples, num_clients, client_ids, args)
 
     def set_hyperparams(self, args):
         self.save_probs = True
@@ -75,8 +77,8 @@ class LossRankSampling(ClientSelection):
 
 # Loss-based Client Selection
 class LossRankSelection(ClientSelection):
-    def __init__(self, n_samples, num_clients) -> None:
-        super().__init__(n_samples, num_clients)
+    def __init__(self, n_samples, num_clients, client_ids, args) -> None:
+        super().__init__(n_samples, num_clients, client_ids, args)
         
     def select(self, round, possible_clients, num_clients, metric):
         num_clients = min(num_clients, len(possible_clients))
@@ -89,8 +91,8 @@ class LossRankSelection(ClientSelection):
 
 # Power-of-d-Choice
 class PowerOfChoice(ClientSelection):
-    def __init__(self, n_samples, num_clients) -> None:
-        super().__init__(n_samples, num_clients)
+    def __init__(self, n_samples, num_clients, client_ids, args) -> None:
+        super().__init__(n_samples, num_clients, client_ids, args)
     
     def select_candidates(self, possible_clients, d):
         buffer_size = min(d, len(possible_clients))
@@ -111,10 +113,8 @@ class PowerOfChoice(ClientSelection):
 
 # Active Federated Learning
 class ActiveFederatedLearning(ClientSelection):
-    def __init__(self, n_samples, num_clients) -> None:
-        super().__init__(n_samples, num_clients)
-    
-    def set_hyperparams(self, args):
+    def __init__(self, n_samples, num_clients, client_ids, args) -> None:
+        super().__init__(n_samples, num_clients, client_ids, args)
         self.alpha1 = 0.75  # args.alpha1 #0.75
         self.alpha2 = args.alpha  #0.01
         self.alpha3 = 0.1   # args.alpha3 #0.1

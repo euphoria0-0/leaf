@@ -71,7 +71,7 @@ class Server:
             c.id: {BYTES_WRITTEN_KEY: 0,
                    BYTES_READ_KEY: 0,
                    LOCAL_COMPUTATIONS_KEY: 0} for c in clients}
-        for c in tqdm(clients, desc=f'Round {rnd}/{num_rnd} Train clients', ncols=70):
+        for c in tqdm(clients, desc=f'Round {rnd}/{num_rnd} Train clients', ncols=80):
             c.model.set_params(self.model)
             comp, num_samples, update = c.train(num_epochs, batch_size, minibatch)
 

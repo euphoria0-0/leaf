@@ -3,10 +3,7 @@ import numpy as np
 
 # base
 class ClientSelection(object):
-    def __init__(self, n_samples, num_clients) -> None:
-        pass
-
-    def set_hyperparams(self, args):
+    def __init__(self, n_samples, num_clients, client_ids, args) -> None:
         pass
 
     def select(self, round, possible_clients, num_clients):
@@ -18,8 +15,8 @@ class ClientSelection(object):
 
 # Random Client Selection
 class RandomSelection(ClientSelection):
-    def __init__(self, n_samples, num_clients) -> None:
-        super().__init__(n_samples, num_clients)
+    def __init__(self, n_samples, num_clients, client_ids, args) -> None:
+        super().__init__(n_samples, num_clients, client_ids, args)
         
     def select(self, round, possible_clients, num_clients):
         num_clients = min(num_clients, len(possible_clients))
@@ -29,8 +26,8 @@ class RandomSelection(ClientSelection):
 
 # Number of Local Data based Client Selection
 class NumDataSampling(ClientSelection):
-    def __init__(self, n_samples, num_clients) -> None:
-        super().__init__(n_samples, num_clients)
+    def __init__(self, n_samples, num_clients, client_ids, args) -> None:
+        super().__init__(n_samples, num_clients, client_ids, args)
         
     def select(self, round, possible_clients, num_clients):
         num_clients = min(num_clients, len(possible_clients))

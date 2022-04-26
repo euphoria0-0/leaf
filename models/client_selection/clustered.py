@@ -4,13 +4,14 @@ import numpy as np
 
 # Clustered Sampling
 class ClusteredSampling1(ClientSelection):
-    def __init__(self, n_samples, num_clients):
-        super().__init__(n_samples, num_clients)
+    def __init__(self, n_samples, num_clients, client_ids, args):
+        super().__init__(n_samples, num_clients, client_ids, args)
         '''
         Since clustering is performed according to the clients sample size n_i,
         unless n_i changes during the learning process,
         Algo 1 needs to be run only once at the beginning of the learning process.
         '''
+        self.client_ids = {c_id: idx for idx, c_id in enumerate(client_ids)}
         epsilon = int(10 ** 10)
         client_ids = sorted(n_samples.keys())
         n_samples = np.array([n_samples[i] for i in client_ids])
@@ -39,9 +40,6 @@ class ClusteredSampling1(ClientSelection):
             distri_clusters[l] /= np.sum(distri_clusters[l])
 
         self.distri_clusters = distri_clusters
-    
-    def set_client_ids(self, client_ids):
-        self.client_ids = {c_id:idx for idx,c_id in enumerate(client_ids)}
 
     def select(self, round, possible_clients, num_clients):
         num_clients = min(num_clients, len(possible_clients))

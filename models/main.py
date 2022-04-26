@@ -87,12 +87,10 @@ def main():
     # client selection method
     client_selection = getattr(sys.modules[__name__], args.method)(
         n_samples=client_num_samples,
-        num_clients=clients_per_round
+        num_clients=clients_per_round,
+        client_ids=client_ids,
+        args=args
     )
-    if args.method in LOSS_BASED_SELECTION:
-        client_selection.set_hyperparams(args)
-    if args.method in CLUSTERED_SAMPLING:
-        client_selection.set_client_ids([c.id for c in clients])
     server.set_client_selection_method(client_selection)
 
     # Simulate training
