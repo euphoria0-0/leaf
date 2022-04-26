@@ -100,7 +100,7 @@ def parse_args():
                         help='number of available clients;',
                         type=int,
                         default=None)
-    parser.add_argument('-d','--buffer_size',
+    parser.add_argument('--buffer_size',
                         help='number of buffer clients;',
                         type=int,
                         default=None)
