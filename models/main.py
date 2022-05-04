@@ -28,6 +28,9 @@ def main():
 
     args = parse_args()
 
+    if args.gpu_id is not None:
+        os.environ["CUDA_VISIBLE_DEVICES"]=args.gpu_id
+
     args.start = time.strftime('%Y%m%d-%H%M%S', time.localtime())
     args.save_path = f'{args.save_path}/{args.dataset}_{args.t[0]}/{args.metrics_name}_{args.start}'
     os.makedirs(args.save_path, exist_ok=True)
@@ -199,9 +202,9 @@ def get_sys_writer_function(args):
 def print_stats(
     num_round, server, clients, num_samples, args, writer, use_val_set):
     
-    train_stat_metrics = server.test_model(clients, set_to_use='train')
-    print_metrics(train_stat_metrics, num_samples, prefix='train_')
-    writer(num_round, train_stat_metrics, 'train')
+    #train_stat_metrics = server.test_model(clients, set_to_use='train')
+    #print_metrics(train_stat_metrics, num_samples, prefix='train_')
+    #writer(num_round, train_stat_metrics, 'train')
 
     eval_set = 'test' if not use_val_set else 'val'
     test_stat_metrics = server.test_model(clients, set_to_use=eval_set)
