@@ -16,7 +16,7 @@ def parse_args():
                     help='name of model;',
                     type=str,
                     required=True)
-    parser.add_argument('--num-rounds',
+    parser.add_argument('-R','--num-rounds',
                     help='number of rounds to simulate;',
                     type=int,
                     default=-1)
@@ -109,6 +109,10 @@ def parse_args():
                     type=str,
                     default='avg',
                     required=False)
+    parser.add_argument('--gpu_id',
+                        help='gpu_id;',
+                        type=str,
+                        default=None)
     
 
 
