@@ -43,8 +43,6 @@ class LossSampling(ClientSelection):
 class LossRankSampling(ClientSelection):
     def __init__(self, n_samples, num_clients, client_ids, args) -> None:
         super().__init__(n_samples, num_clients, client_ids, args)
-
-    def set_hyperparams(self, args):
         self.save_probs = True
         if self.save_probs:
             self.result_file = open(f'{args.save_path}/values.txt', 'w')

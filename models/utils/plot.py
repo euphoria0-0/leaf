@@ -35,7 +35,7 @@ df_stats = pd.DataFrame()
 # raw data file
 files = os.listdir(data_path)[::-1]
 for file in files:
-    model = file[:-16].replace('S_','')
+    model = file[:-16].replace('L_','')
 
     if model in columns.keys():
         columns[model] += 1
@@ -62,7 +62,7 @@ for col in columns.keys():
     if 'Random' in col: continue
     cols = [x for x in df_raw.columns if col in x]
     if args.offset:
-        df_stats[col] = df_raw[cols].mean(axis=1) - df['Random']
+        df_stats[col] = df_raw[cols].mean(axis=1) - df_stats['Random']
     else:
         df_stats[col] = df_raw[cols].mean(axis=1)
     if args.std:
@@ -77,14 +77,19 @@ df_stats = df_stats[:args.max]
 
 # plotting
 sns.set(rc={'figure.figsize': (16,9)}, style='white')
-num_cols = len(columns)-1 if args.offset else len(columns)
-color_palette_name = 'Spectral' if num_cols > 10 else 'tab10'
-colors = sns.color_palette(color_palette_name, num_cols)
+
+nums = len(columns.keys())
+#if args.offset:
+#    nums -= 1
+if nums > 10:
+    colors = sns.color_palette('Spectral', n_colors=nums)
+else:
+    colors = sns.color_palette(n_colors=nums)
 
 
 fig, ax = plt.subplots()
 for i, column in enumerate(columns):
-    if args.offset and 'Random' in args.offset:
+    if args.offset and 'Random' in column:
         continue
 
     x, y = df_stats.index, df_stats[column]
