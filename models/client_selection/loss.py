@@ -21,6 +21,8 @@ class LossSampling(ClientSelection):
         # create value
         if self.loss == 'total':
             metric *= np.array([c.num_samples for c in possible_clients])
+        elif self.loss == 'sqrt':
+            metric *= np.array([np.sqrt(c.num_samples) for c in possible_clients])
         values = np.exp(np.array(metric) * self.alpha)
         probs = values / sum(values)
         selected_clients = np.random.choice(possible_clients, num_clients, p=probs, replace=False)
@@ -31,7 +33,7 @@ class LossSampling(ClientSelection):
         return selected_clients
         
     def save_results(self, arr):
-        np.round(arr, 8).tofile(self.result_file, sep=',')
+        np.round(arr, 12).tofile(self.result_file, sep=',')
         self.result_file.write("\n")
     
     def close_file(self):

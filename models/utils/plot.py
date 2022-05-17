@@ -12,7 +12,7 @@ from scipy.interpolate import interp1d, make_interp_spline
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data', type=str, default='celeba_s')
-    parser.add_argument('--max', type=int, default=500)
+    parser.add_argument('--max', type=int, default=400)
     parser.add_argument('--std', action='store_true', default=False, help='show std')
     parser.add_argument('--offset', action='store_true', default=False, help='show random offset')
     parser.add_argument('--smooth', action='store_true', default=False, help='smoothing plot')
@@ -36,6 +36,9 @@ df_stats = pd.DataFrame()
 files = os.listdir(data_path)[::-1]
 for file in files:
     model = file[:-16].replace('L_','')
+
+    if 'Random' not in model and 'LossSampling' not in model:
+        continue
 
     if model in columns.keys():
         columns[model] += 1
